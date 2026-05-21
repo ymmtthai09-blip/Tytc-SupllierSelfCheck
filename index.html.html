@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supplier Self-Audit Form | FM-QA-004 Rev.03 TYTC</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    background: #0a0f1a;
+    color: #e2e8f0;
+    font-family: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+  }
+  button { font-family: inherit; }
+  textarea { font-family: inherit; }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    border-bottom: 1px solid #1e3a5f;
+    padding: 20px 24px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-inner { max-width: 900px; margin: 0 auto; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+  .header-label { font-size: 11px; color: #38bdf8; letter-spacing: 2px; font-weight: 600; margin-bottom: 4px; }
+  .header-title { font-size: 22px; font-weight: 700; color: #f1f5f9; }
+  .header-sub { margin-top: 4px; color: #64748b; font-size: 13px; }
+  .header-grade { text-align: right; }
+  .grade-letter { font-size: 28px; font-weight: 800; }
+  .grade-pct { font-size: 13px; color: #94a3b8; }
+  .grade-status { font-size: 11px; font-weight: 600; }
+  .progress-bar-wrap { margin-top: 16px; }
+  .progress-info { display: flex; justify-content: space-between; font-size: 12px; color: #64748b; margin-bottom: 6px; }
+  .progress-track { height: 6px; background: #1e293b; border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #3b82f6, #38bdf8); transition: width 0.4s; }
+
+  /* Main */
+  .main { max-width: 900px; margin: 0 auto; padding: 20px 16px; }
+
+  /* Step guide */
+  .step-guide {
+    background: #0f172a; border: 1px solid #1e3a5f; border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 24px;
+  }
+  .step-guide-title { font-size: 12px; color: #38bdf8; font-weight: 600; margin-bottom: 8px; }
+  .step-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .step-card {
+    background: #1e293b; border-radius: 8px; padding: 12px; border-left: 3px solid #3b82f6;
+  }
+  .step-num { font-size: 20px; font-weight: 800; color: #3b82f6; }
+  .step-name { font-weight: 600; font-size: 13px; color: #e2e8f0; }
+  .step-desc { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+  .tab-btn {
+    padding: 6px 12px; border-radius: 20px; border: 1.5px solid #1e3a5f;
+    background: #0f172a; color: #64748b; font-size: 12px; cursor: pointer;
+    font-weight: 400; transition: all 0.15s;
+  }
+  .tab-btn.active {
+    border-color: #38bdf8; background: #0c4a6e; color: #38bdf8; font-weight: 700;
+  }
+  .tab-badge {
+    margin-left: 6px; background: #1e3a5f; color: #38bdf8;
+    border-radius: 10px; padding: 1px 6px; font-size: 10px;
+  }
+
+  /* Section panel */
+  .section-panel {
+    background: #0f172a; border: 1px solid #1e3a5f; border-radius: 16px; overflow: hidden;
+  }
+  .section-header {
+    background: linear-gradient(135deg, #1e1b4b, #0f172a);
+    padding: 16px 20px; border-bottom: 1px solid #1e3a5f;
+  }
+  .section-title { font-size: 22px; font-weight: 800; color: #f1f5f9; }
+  .section-subtitle { font-size: 13px; color: #64748b; margin-top: 2px; }
+
+  /* Item */
+  .audit-item {
+    padding: 20px; border-bottom: 1px solid #1e293b; transition: background 0.2s;
+  }
+  .audit-item.answered { background: #0d1b2a; }
+  .audit-item:last-child { border-bottom: none; }
+  .item-header { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
+  .item-no {
+    background: #1e3a5f; color: #38bdf8; border-radius: 6px;
+    padding: 2px 8px; font-size: 11px; font-weight: 700; white-space: nowrap; margin-top: 2px;
+  }
+  .item-critical {
+    background: #450a0a; color: #fca5a5; border-radius: 6px;
+    padding: 2px 8px; font-size: 10px; font-weight: 600; white-space: nowrap; margin-top: 2px;
+  }
+  .item-q { font-size: 14px; font-weight: 600; color: #e2e8f0; line-height: 1.5; }
+  .item-qen { font-size: 12px; color: #475569; margin-top: 4px; font-style: italic; }
+  .input-type-badge { font-size: 11px; color: #475569; margin-bottom: 8px; }
+  .input-type-badge span { color: #38bdf8; }
+
+  /* Scale */
+  .scale-wrap { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; align-items: center; }
+  .scale-btn {
+    width: 48px; height: 48px; border-radius: 8px; border: 2px solid #334155;
+    background: #1e293b; color: #94a3b8; font-weight: 700; font-size: 16px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .scale-desc { align-self: center; font-size: 12px; color: #94a3b8; }
+
+  /* Checklist */
+  .checklist-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .check-btn {
+    padding: 6px 14px; border-radius: 20px; border: 1.5px solid #334155;
+    background: #1e293b; color: #64748b; font-size: 13px; cursor: pointer;
+    transition: all 0.15s; font-weight: 400;
+  }
+  .check-btn.checked { border-color: #38bdf8; background: #0c4a6e; color: #38bdf8; font-weight: 600; }
+
+  /* Classify */
+  .classify-wrap { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .cls-btn {
+    padding: 5px 14px; border-radius: 6px; font-size: 12px; font-weight: 700;
+    cursor: pointer; border: 1.5px solid #334155; background: #1e293b; color: #64748b;
+    transition: all 0.15s;
+  }
+  .cls-btn.C.active { border-color: #22c55e; background: #14532d; color: #86efac; }
+  .cls-btn.NC.active { border-color: #ef4444; background: #450a0a; color: #fca5a5; }
+  .cls-btn.OFI.active { border-color: #f59e0b; background: #451a03; color: #fcd34d; }
+
+  /* Comment */
+  .comment-box {
+    width: 100%; margin-top: 10px; padding: 10px; border-radius: 8px;
+    background: #1e293b; border: 1px solid #334155; color: #cbd5e1;
+    font-size: 12px; resize: vertical; min-height: 60px;
+  }
+
+  /* Docs toggle */
+  .docs-toggle {
+    background: none; border: none; color: #475569; cursor: pointer;
+    font-size: 12px; padding: 0; display: flex; align-items: center; gap: 6px; margin-top: 10px;
+  }
+  .docs-panel {
+    margin-top: 8px; background: #0a1628; border-radius: 8px;
+    padding: 12px; border: 1px solid #1e3a5f; display: none;
+  }
+  .docs-panel.open { display: block; }
+  .docs-title { font-size: 11px; color: #38bdf8; font-weight: 600; margin-bottom: 6px; }
+  .doc-row { display: flex; gap: 8px; margin-bottom: 4px; font-size: 12px; }
+  .doc-num { color: #38bdf8; min-width: 16px; }
+  .doc-name { color: #94a3b8; }
+
+  /* Nav */
+  .nav-wrap { display: flex; justify-content: space-between; margin-top: 20px; gap: 12px; }
+  .nav-btn {
+    padding: 10px 24px; border-radius: 8px; border: 1.5px solid #1e3a5f;
+    background: #0f172a; color: #94a3b8; cursor: pointer; font-weight: 600; font-size: 14px;
+  }
+  .nav-btn:disabled { color: #334155; cursor: default; }
+  .nav-summary {
+    padding: 10px 24px; border-radius: 8px; border: none;
+    background: linear-gradient(135deg, #1d4ed8, #0369a1);
+    color: #fff; cursor: pointer; font-weight: 700; font-size: 14px;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 999;
+    display: none; align-items: center; justify-content: center; padding: 16px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: #0f172a; border: 1px solid #1e3a5f; border-radius: 16px;
+    max-width: 680px; width: 100%; max-height: 90vh; overflow: auto; padding: 28px;
+  }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .modal-title { font-size: 20px; font-weight: 800; color: #f1f5f9; }
+  .modal-close { background: none; border: none; color: #64748b; cursor: pointer; font-size: 20px; }
+  .score-card {
+    background: linear-gradient(135deg, #1e1b4b, #0c2340); border-radius: 12px;
+    padding: 20px; text-align: center; margin-bottom: 20px; border: 2px solid transparent;
+  }
+  .score-grade { font-size: 64px; font-weight: 900; }
+  .score-pct { font-size: 32px; font-weight: 700; color: #f1f5f9; }
+  .score-label { font-size: 14px; color: #94a3b8; }
+  .score-pass {
+    margin-top: 12px; padding: 8px 20px; border-radius: 20px; display: inline-block;
+    font-weight: 700; font-size: 16px;
+  }
+  .grade-table { margin-bottom: 20px; }
+  .grade-table-title { font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 10px; }
+  .grade-row { display: flex; justify-content: space-between; padding: 6px 10px; border-radius: 6px; margin-bottom: 2px; }
+  .nc-section { margin-bottom: 20px; }
+  .nc-header { font-size: 13px; font-weight: 600; color: #fca5a5; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .nc-critical-badge { background: #450a0a; color: #fca5a5; border-radius: 10px; padding: 2px 8px; font-size: 11px; }
+  .nc-card { background: #1a0a0a; border: 1px solid #7f1d1d; border-radius: 8px; padding: 12px; margin-bottom: 8px; }
+  .nc-card-id { font-size: 12px; color: #fca5a5; font-weight: 600; }
+  .nc-card-q { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+  .nc-card-comment { font-size: 11px; color: #64748b; margin-top: 4px; font-style: italic; }
+  .nc-conditions { background: #0a1628; border: 1px solid #1e3a5f; border-radius: 10px; padding: 16px; }
+  .nc-cond-title { font-size: 13px; font-weight: 700; color: #38bdf8; margin-bottom: 10px; }
+  .nc-cond-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .nc-cond-text { font-size: 13px; }
+  .modal-back {
+    width: 100%; margin-top: 20px; padding: 12px; border-radius: 10px;
+    background: linear-gradient(135deg, #1d4ed8, #0369a1);
+    border: none; color: #fff; font-weight: 700; font-size: 15px; cursor: pointer;
+  }
+
+  /* Save toolbar */
+  .save-bar {
+    background: #0a1628; border-bottom: 1px solid #1e3a5f;
+    padding: 8px 24px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .save-bar-inner { max-width: 900px; margin: 0 auto; width: 100%; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .save-label { font-size: 11px; color: #475569; flex: 1; min-width: 140px; }
+  .save-label span { color: #38bdf8; }
+  .btn-export {
+    padding: 6px 16px; border-radius: 6px; border: 1.5px solid #22c55e;
+    background: #14532d; color: #86efac; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .btn-export:hover { background: #166534; }
+  .btn-import {
+    padding: 6px 16px; border-radius: 6px; border: 1.5px solid #38bdf8;
+    background: #0c4a6e; color: #38bdf8; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .btn-import:hover { background: #075985; }
+  .btn-clear {
+    padding: 6px 16px; border-radius: 6px; border: 1.5px solid #475569;
+    background: transparent; color: #64748b; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .btn-clear:hover { border-color: #ef4444; color: #fca5a5; }
+  .autosave-indicator {
+    font-size: 11px; color: #22c55e; display: flex; align-items: center; gap: 4px;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .autosave-indicator.show { opacity: 1; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: #1e293b; border: 1px solid #334155; border-radius: 10px;
+    padding: 12px 20px; font-size: 13px; color: #e2e8f0; z-index: 9999;
+    transition: transform 0.3s ease; white-space: nowrap; box-shadow: 0 8px 24px #000a;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { border-color: #22c55e; color: #86efac; }
+  .toast.error { border-color: #ef4444; color: #fca5a5; }
+
+  @media (max-width: 600px) {
+    .step-grid { grid-template-columns: 1fr; }
+    .header-top { flex-direction: column; }
+    .nav-wrap { flex-wrap: wrap; }
+    .nav-summary { order: -1; width: 100%; }
+  }
+
+  /* Supplier Info Panel */
+  .supplier-info-panel {
+    background: #0a1628; border: 1.5px solid #1e3a5f; border-radius: 14px;
+    padding: 20px 24px; margin-bottom: 20px;
+  }
+  .supplier-info-title {
+    font-size: 12px; color: #38bdf8; font-weight: 700; letter-spacing: 1.5px;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .info-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+  .info-grid-3 {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;
+    margin-top: 16px;
+  }
+  @media (max-width: 700px) {
+    .info-grid, .info-grid-3 { grid-template-columns: 1fr; }
+  }
+  .info-field label {
+    font-size: 11px; color: #64748b; font-weight: 600; display: block; margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+  .info-field input {
+    width: 100%; padding: 9px 12px; border-radius: 8px;
+    background: #1e293b; border: 1.5px solid #334155; color: #e2e8f0;
+    font-size: 13px; font-family: inherit; transition: border-color 0.2s;
+  }
+  .info-field input:focus { outline: none; border-color: #38bdf8; }
+  .info-field input::placeholder { color: #475569; }
+  .info-divider {
+    border: none; border-top: 1px solid #1e3a5f; margin: 16px 0;
+  }
+  .info-section-label {
+    font-size: 11px; color: #38bdf8; font-weight: 600; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* PDF Export Button */
+  .btn-pdf {
+    padding: 6px 16px; border-radius: 6px; border: 1.5px solid #f59e0b;
+    background: #451a03; color: #fcd34d; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .btn-pdf:hover { background: #78350f; }
+
+  /* ── PRINT / PDF STYLES ── */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    body { background: #fff !important; color: #111 !important; font-size: 11pt; }
+
+    .header, .save-bar, .step-guide, .tabs, .nav-wrap,
+    .docs-toggle, .docs-panel, .btn-export, .btn-import, .btn-clear, .btn-pdf,
+    .autosave-indicator, .toast, #importFile { display: none !important; }
+
+    .main { max-width: 100%; padding: 0; margin: 0; }
+
+    /* Cover/Info panel prints at top of first page */
+    .supplier-info-panel {
+      background: #f8fafc !important; border: 1.5px solid #94a3b8 !important;
+      border-radius: 8px; padding: 16px 20px; margin-bottom: 16px;
+      page-break-after: avoid;
+    }
+    .supplier-info-title { color: #1e40af !important; }
+    .info-field label { color: #374151 !important; }
+    .info-field input {
+      background: #fff !important; border: 1px solid #94a3b8 !important;
+      color: #111 !important; padding: 6px 8px;
+    }
+    .info-divider { border-top: 1px solid #94a3b8 !important; }
+    .info-section-label { color: #1e40af !important; }
+
+    /* Print header shown only in print */
+    .print-header {
+      display: block !important;
+      text-align: center; margin-bottom: 20px; padding-bottom: 12px;
+      border-bottom: 2px solid #1e40af;
+    }
+    .print-header-title { font-size: 16pt; font-weight: 800; color: #1e40af; }
+    .print-header-sub { font-size: 10pt; color: #374151; margin-top: 4px; }
+
+    /* All sections print */
+    .section-panel { display: block !important; background: #fff !important; border: none !important; }
+
+    .all-sections-print { display: block !important; }
+
+    .print-section-block {
+      page-break-before: always;
+      margin-bottom: 0;
+    }
+    .print-section-block:first-child { page-break-before: avoid; }
+
+    .section-header {
+      background: #1e3a5f !important; padding: 10px 16px !important;
+      margin-bottom: 0;
+    }
+    .section-title { font-size: 13pt !important; color: #fff !important; }
+    .section-subtitle { color: #cbd5e1 !important; }
+
+    .audit-item {
+      padding: 12px 16px; border-bottom: 1px solid #e2e8f0 !important;
+      background: #fff !important; break-inside: avoid;
+    }
+    .audit-item.answered { background: #f0f9ff !important; }
+
+    .item-no { background: #dbeafe !important; color: #1e40af !important; }
+    .item-critical { background: #fee2e2 !important; color: #dc2626 !important; }
+    .item-q { color: #111 !important; }
+    .item-qen { color: #6b7280 !important; }
+    .input-type-badge { color: #374151 !important; }
+    .input-type-badge span { color: #1e40af !important; }
+
+    /* Scale buttons in print */
+    .scale-btn {
+      width: 36px !important; height: 36px !important; font-size: 12pt !important;
+      border-radius: 4px !important;
+    }
+    .scale-desc { color: #374151 !important; }
+
+    /* Checklist in print */
+    .check-btn { border-radius: 4px !important; font-size: 10pt !important; }
+    .check-btn.checked { background: #dbeafe !important; color: #1e40af !important; border-color: #3b82f6 !important; }
+
+    /* Classify buttons in print */
+    .cls-btn { font-size: 10pt !important; }
+    .cls-btn.C.active { background: #dcfce7 !important; color: #15803d !important; border-color: #22c55e !important; }
+    .cls-btn.NC.active { background: #fee2e2 !important; color: #dc2626 !important; border-color: #ef4444 !important; }
+    .cls-btn.OFI.active { background: #fef3c7 !important; color: #b45309 !important; border-color: #f59e0b !important; }
+
+    /* Comment box in print */
+    .comment-box {
+      background: #f8fafc !important; border: 1px solid #cbd5e1 !important;
+      color: #374151 !important; resize: none !important; min-height: 40px !important;
+    }
+
+    /* Score summary on last page */
+    .print-summary {
+      display: block !important;
+      page-break-before: always;
+      padding: 20px;
+    }
+    .print-summary-title {
+      font-size: 15pt; font-weight: 800; color: #1e40af;
+      border-bottom: 2px solid #1e40af; padding-bottom: 8px; margin-bottom: 16px;
+    }
+    .print-summary-grade {
+      font-size: 40pt; font-weight: 900; text-align: center; margin: 12px 0;
+    }
+    .print-summary-pct { font-size: 20pt; font-weight: 700; text-align: center; color: #111; }
+    .print-summary-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 10pt; }
+    .print-summary-table th, .print-summary-table td {
+      border: 1px solid #94a3b8; padding: 6px 10px; text-align: left;
+    }
+    .print-summary-table th { background: #dbeafe; color: #1e40af; font-weight: 700; }
+    .print-summary-table tr:nth-child(even) td { background: #f8fafc; }
+
+    .modal-overlay { display: none !important; }
+
+    /* Hide interactive-only elements */
+    .tab-btn, #tabsContainer { display: none !important; }
+  }
+
+  /* Print header hidden in screen mode */
+  .print-header { display: none; }
+  .all-sections-print { display: none; }
+  .print-summary { display: none; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div>
+        <div class="header-label">FM-QA-004 Rev.03 | TYTC SUPPLIER AUDIT</div>
+        <div class="header-title">🏭 Supplier Self-Audit Form</div>
+        <div class="header-sub">แบบฟอร์มตรวจประเมินตนเอง — ระบบควบคุมคุณภาพซัพพลายเออร์</div>
+      </div>
+      <div class="header-grade">
+        <div class="grade-letter" id="hdrGrade">—</div>
+        <div class="grade-pct" id="hdrPct">0.0%</div>
+        <div class="grade-status" id="hdrStatus" style="color:#64748b">— —</div>
+      </div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-info">
+        <span id="progressText">ความคืบหน้า: 0/0 ข้อ</span>
+        <span id="scoreText">คะแนน: 0/0</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SAVE TOOLBAR -->
+<div class="save-bar">
+  <div class="save-bar-inner">
+    <div class="save-label">💾 <span id="saveStatus">กำลังโหลด...</span></div>
+    <div class="autosave-indicator" id="autoSaveIndicator">✓ บันทึกแล้ว</div>
+    <button class="btn-export" onclick="exportJSON()">⬇ Export JSON</button>
+    <button class="btn-import" onclick="document.getElementById('importFile').click()">⬆ Import JSON</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
+    <button class="btn-pdf" onclick="exportPDF()">🖨 บันทึก PDF</button>
+    <button class="btn-clear" onclick="clearAll()">🗑 ล้างข้อมูล</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- PRINT HEADER (visible only when printing) -->
+<div class="print-header">
+  <div class="print-header-title">🏭 Supplier Self-Audit Form — FM-QA-004 Rev.03 TYTC</div>
+  <div class="print-header-sub">แบบฟอร์มตรวจประเมินตนเอง — ระบบควบคุมคุณภาพซัพพลายเออร์</div>
+</div>
+
+<div class="main">
+
+  <!-- Supplier Info Panel -->
+  <div class="supplier-info-panel" id="supplierInfoPanel">
+    <div class="supplier-info-title">🏢 ข้อมูลการตรวจประเมิน</div>
+    <div class="info-grid">
+      <div class="info-field">
+        <label>ชื่อ Supplier / บริษัท</label>
+        <input type="text" id="supplierName" placeholder="กรอกชื่อ Supplier หรือบริษัท..." oninput="triggerAutoSave()">
+      </div>
+      <div class="info-field">
+        <label>รหัส Supplier</label>
+        <input type="text" id="supplierCode" placeholder="เช่น SUP-00123" oninput="triggerAutoSave()">
+      </div>
+      <div class="info-field">
+        <label>วันที่ตรวจประเมิน</label>
+        <input type="date" id="auditDate" oninput="triggerAutoSave()">
+      </div>
+      <div class="info-field">
+        <label>ประเภทการตรวจ</label>
+        <input type="text" id="auditType" placeholder="เช่น Self-Audit / On-site Audit" oninput="triggerAutoSave()">
+      </div>
+    </div>
+    <hr class="info-divider">
+    <div class="info-section-label">👤 ผู้ตรวจประเมิน (Auditors)</div>
+    <div class="info-grid-3">
+      <div class="info-field">
+        <label>ผู้ตรวจประเมิน TYTC (ชื่อ-นามสกุล)</label>
+        <input type="text" id="auditorTYTC" placeholder="ชื่อผู้ตรวจจาก TYTC..." oninput="triggerAutoSave()">
+      </div>
+      <div class="info-field">
+        <label>ตำแหน่ง TYTC</label>
+        <input type="text" id="auditorTYTCTitle" placeholder="เช่น Supplier Quality Engineer" oninput="triggerAutoSave()">
+      </div>
+      <div class="info-field">
+        <label>ลายเซ็น / วันที่ (TYTC)</label>
+        <input type="text" id="auditorTYTCSign" placeholder="วันที่ลงนาม..." oninput="triggerAutoSave()">
+      </div>
+      <div class="info-field">
+        <label>ผู้ตรวจประเมิน Supplier (ชื่อ-นามสกุล)</label>
+        <input type="text" id="auditorSupplier" placeholder="ชื่อผู้ตรวจจาก Supplier..." oninput="triggerAutoSave()">
+      </div>
+      <div class="info-field">
+        <label>ตำแหน่ง Supplier</label>
+        <input type="text" id="auditorSupplierTitle" placeholder="เช่น QA Manager" oninput="triggerAutoSave()">
+      </div>
+      <div class="info-field">
+        <label>ลายเซ็น / วันที่ (Supplier)</label>
+        <input type="text" id="auditorSupplierSign" placeholder="วันที่ลงนาม..." oninput="triggerAutoSave()">
+      </div>
+    </div>
+  </div>
+
+  <!-- Step Guide -->
+  <div class="step-guide">
+    <div class="step-guide-title">📌 ขั้นตอนการใช้งานฟอร์ม</div>
+    <div class="step-grid">
+      <div class="step-card">
+        <div class="step-num">Step 1</div>
+        <div class="step-name">ให้คะแนน 0-4</div>
+        <div class="step-desc">0=ไม่มีเลย → 4=สมบูรณ์แบบ</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">Step 2</div>
+        <div class="step-name">จัดประเภท</div>
+        <div class="step-desc">C = สอดคล้อง / NC = ไม่สอดคล้อง / OFI = ข้อเสนอแนะ</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">Step 3</div>
+        <div class="step-name">ดูสรุปผล</div>
+        <div class="step-desc">คะแนนรวม, เกณฑ์ผ่าน, ใบ NC</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" id="tabsContainer"></div>
+
+  <!-- Section Panel -->
+  <div class="section-panel" id="sectionPanel"></div>
+
+  <!-- Nav -->
+  <div class="nav-wrap">
+    <button class="nav-btn" id="btnPrev" onclick="navigate(-1)">← ก่อนหน้า</button>
+    <button class="nav-summary" onclick="openSummary()">📊 ดูสรุปผลคะแนน</button>
+    <button class="nav-btn" id="btnNext" onclick="navigate(1)">ถัดไป →</button>
+  </div>
+  <!-- All sections print block (hidden on screen, shown when printing) -->
+  <div class="all-sections-print" id="allSectionsPrint"></div>
+  <!-- Print summary (hidden on screen) -->
+  <div class="print-summary" id="printSummary"></div>
+</div>
+
+<!-- Summary Modal -->
+<div class="modal-overlay" id="summaryModal" onclick="if(event.target===this)closeSummary()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">📊 สรุปผลการ Self-Audit</div>
+      <button class="modal-close" onclick="closeSummary()">✕</button>
+    </div>
+    <div id="modalContent"></div>
+    <button class="modal-back" onclick="closeSummary()">กลับแก้ไขฟอร์ม</button>
+  </div>
+</div>
+
+<script>
+const auditSections = [
+  {
+    id: 1, title: "Quality Assurance System", titleTH: "ระบบบริหารงานคุณภาพ", icon: "🏆",
+    items: [
+      { id:"1-1", no:"(1)", question:"ระบบบริหารงานคุณภาพที่ผู้ผลิตได้รับการรับรองมีอะไรบ้าง (ISO 9001, IATF 16949 ฯลฯ)", questionEN:"What quality management systems are certified?", inputType:"checklist", options:["ISO 9001","IATF 16949","ISO 14001","ISO 45001","อื่นๆ"], requiredDocs:["Certificate ISO 9001 / IATF 16949 (ไม่หมดอายุ)","แผนการขอรับรอง IATF 16949 (กรณีไม่มี)","หนังสืออนุมัติจาก Top Management"], critical:true },
+      { id:"1-2", no:"(2)", question:"นโยบายคุณภาพได้รับการทบทวนและอนุมัติจากผู้บริหารสูงสุดหรือไม่ มีความสอดคล้องกับเป้าหมายองค์กร", questionEN:"Is quality policy reviewed and approved by Top Management?", inputType:"scale", requiredDocs:["Quality Policy (อนุมัติโดย Top Mgmt)","Quality Objective / KPI (อนุมัติโดย Top Mgmt)"], critical:false },
+      { id:"1-3", no:"(3)", question:"มีการเฝ้าติดตาม KPI ประจำเดือนและ Action Plan ประจำปีเพื่อบรรลุวัตถุประสงค์ด้านคุณภาพหรือไม่", questionEN:"Is there monthly KPI monitoring and annual action plan?", inputType:"scale", requiredDocs:["รายงาน KPI ประจำเดือน","Action Plan ประจำปี","KPI: Quality Claim, Quality NG, Delivery on time"], critical:false },
+      { id:"1-4", no:"(4)", question:"มีการสื่อสาร Quality Policy ไปยังพนักงานทุกคนอย่างมีประสิทธิภาพหรือไม่", questionEN:"Is Quality Policy effectively communicated to all employees?", inputType:"scale", requiredDocs:["ตัวอย่างสื่อ/หลักฐานการสื่อสาร Quality Policy","Procedure การสื่อสาร (Internal & External)"], critical:false },
+      { id:"1-5", no:"(5)", question:"เมื่อ KPI ไม่บรรลุเป้าหมาย มีการดำเนินการแก้ไขและป้องกันการเกิดซ้ำอย่างเหมาะสมหรือไม่", questionEN:"When KPI targets are not met, is corrective/preventive action taken?", inputType:"scale", requiredDocs:["Corrective Action Report กรณี KPI ไม่บรรลุ","ผลลัพธ์หลังการแก้ไข"], critical:false },
+      { id:"1-6", no:"(6)", question:"มีการวิเคราะห์และปรับปรุงผลการประเมินคุณภาพให้บรรลุเป้าหมายของลูกค้าหรือไม่", questionEN:"Is supplier performance analyzed and improved to meet customer goals?", inputType:"scale", requiredDocs:["KPI เป้าหมายที่ลูกค้ากำหนด","กิจกรรมการปรับปรุง (Improvement Activities)"], critical:false },
+      { id:"1-7", no:"(7)", question:"มีการทบทวนของฝ่ายบริหาร (Management Review) ตามความถี่ที่กำหนด และสอดคล้อง IATF 16949 หรือไม่", questionEN:"Is Management Review conducted per schedule and compliant with IATF 16949?", inputType:"scale", requiredDocs:["Procedure Management Review (ความถี่/วาระ)","Management Review Report (มติ-ผลการตัดสินใจ Top Mgmt)"], critical:false }
+    ]
+  },
+  {
+    id: 2, title: "Internal Audit", titleTH: "การตรวจติดตามภายใน", icon: "🔍",
+    items: [
+      { id:"2-1", no:"(1)", question:"มีระบบการตรวจติดตามภายใน ครอบคลุม Procedure, ประเภท Audit, ความถี่, และแผน Audit หรือไม่", questionEN:"Is there an internal audit system with procedure, types, frequency, and schedule?", inputType:"scale", requiredDocs:["Procedure Internal Audit","Audit Schedule / Audit Plan","Audit Report"], critical:true },
+      { id:"2-2", no:"(2)", question:"มีการกำหนดคุณสมบัติและความสามารถของ Internal Auditor สอดคล้องกับ IATF 16949 หรือไม่", questionEN:"Are auditor qualifications defined per IATF 16949?", inputType:"scale", requiredDocs:["Auditor Qualification / Competency List","Auditor Name List"], critical:false },
+      { id:"2-3", no:"(3)", question:"การตรวจติดตามภายในครอบคลุมระบบบริหารคุณภาพทุกฝ่าย ทุกกระบวนการหรือไม่", questionEN:"Does internal audit cover all departments and all QMS processes?", inputType:"scale", requiredDocs:["Audit Scope / Coverage Matrix","หลักฐานการ Audit ทุกฝ่าย"], critical:false },
+      { id:"2-4", no:"(4)", question:"มีการตรวจติดตามกระบวนการผลิตครอบคลุมทุกกะการทำงาน และ Special Process ตามข้อกำหนดลูกค้าหรือไม่", questionEN:"Does process audit cover all production shifts and special processes?", inputType:"scale", requiredDocs:["Process Audit Report (ครบทุกกะ)","Special Process Audit Record"], critical:false },
+      { id:"2-5", no:"(5)", question:"เมื่อพบ Nonconformity มีการออก CAR/PAR และดำเนินการแก้ไขตามแผนหรือไม่", questionEN:"When NC is found, is CAR/PAR issued and action taken per plan?", inputType:"scale", requiredDocs:["CAR-PAR Log / Status Report","หลักฐานการแก้ไข-ป้องกัน"], critical:true }
+    ]
+  },
+  {
+    id: 3, title: "Document & Record Control", titleTH: "ระบบควบคุมเอกสารและบันทึก", icon: "📋",
+    items: [
+      { id:"3-1", no:"(1)", question:"มีระบบในการควบคุมและจัดเก็บเอกสารคุณภาพ (Drawing, Specification, บันทึกคุณภาพ) ที่เพียงพอหรือไม่", questionEN:"Is there adequate document control and storage system?", inputType:"scale", requiredDocs:["Procedure: Document Control","Procedure: Record Control","ตัวอย่างใบ DAR (เอกสารภายนอก)"], critical:true },
+      { id:"3-2", no:"(2)", question:"เอกสารระบบคุณภาพ (WP, WI) เป็นปัจจุบันและมีการปรับปรุงอย่างต่อเนื่องหรือไม่", questionEN:"Are quality system documents (WP, WI) current and continuously updated?", inputType:"scale", requiredDocs:["Quality Manual","Master List เอกสาร WP/WI (ฝ่าย QS, QA)"], critical:false },
+      { id:"3-3", no:"(3)", question:"มีระบบการแจกจ่ายและเรียกคืนเอกสาร OLD Revision อย่างชัดเจนหรือไม่", questionEN:"Is there a clear document distribution and recall system for OLD revisions?", inputType:"scale", requiredDocs:["บันทึกการแจกจ่าย-เรียกคืนเอกสาร (พร้อมลายเซ็น)"], critical:false },
+      { id:"3-4", no:"(4)", question:"Drawing และ Engineering Standard ได้รับการควบคุมและแจกจ่ายอย่างถูกต้อง มีการทบทวนแล้วเสร็จภายใน 10 วันหรือไม่", questionEN:"Are drawings controlled and reviewed within 10 days of receipt?", inputType:"scale", requiredDocs:["Procedure/WI ควบคุม Drawing","Master List Drawing","บันทึกการทบทวน Drawing (≤10 วัน)"], critical:true },
+      { id:"3-5", no:"(5)", question:"ระยะเวลาการจัดเก็บบันทึกคุณภาพสอดคล้องกับ Customer Requirement (20 ปี) หรือไม่", questionEN:"Is quality record retention period compliant with customer requirement (20 years)?", inputType:"scale", requiredDocs:["ตารางระยะเวลาการจัดเก็บบันทึก (≥20 ปี ตาม TOPY Manual)"], critical:false }
+    ]
+  },
+  {
+    id: 4, title: "Risk & Opportunities Management", titleTH: "การบริหารความเสี่ยงและโอกาส", icon: "⚠️",
+    items: [
+      { id:"4-1", no:"(1)", question:"มี Procedure Risk & Opportunities ที่ครอบคลุมการสื่อสาร/แจ้งลูกค้าเพื่อความต่อเนื่องการส่งมอบหรือไม่", questionEN:"Is there a Risk & Opportunities procedure covering customer communication for delivery continuity?", inputType:"scale", requiredDocs:["Procedure: Risk & Opportunities"], critical:true },
+      { id:"4-2", no:"(2)", question:"มีเกณฑ์การประเมินความเสี่ยงที่ชัดเจน (Severity, Occurrence, Impact: L/M/H) หรือไม่", questionEN:"Are risk scoring criteria clearly defined (L/M/H levels)?", inputType:"scale", requiredDocs:["เกณฑ์การประเมิน Risk L/M/H","Risk Assessment Matrix"], critical:false },
+      { id:"4-3", no:"(3)", question:"ความเสี่ยงระดับ High (H) มีการจัดทำ Risk Management Plan และมาตรการควบคุม/ป้องกันหรือไม่", questionEN:"For High risks, is a Risk Management Plan with control measures in place?", inputType:"scale", requiredDocs:["Risk Management Plan (สำหรับ High Risk)","มาตรการควบคุม-ป้องกัน Risk"], critical:true },
+      { id:"4-4", no:"(4)", question:"มี Contingency Plan รองรับสถานการณ์ฉุกเฉิน (ไฟดับ, เครื่องจักรเสีย, ภัยธรรมชาติ) พร้อมผลการซ้อมแผน", questionEN:"Is there a Contingency Plan for emergencies with drill records?", inputType:"scale", requiredDocs:["Procedure Contingency Plan","แผนการซ้อม + ผลการซ้อม (≥3 Case)"], critical:true }
+    ]
+  },
+  {
+    id: 5, title: "Training System", titleTH: "ระบบการฝึกอบรม", icon: "📚",
+    items: [
+      { id:"5-1", no:"(1)", question:"มีระบบในการควบคุมและพัฒนาทักษะความสามารถของผู้ปฏิบัติงานอย่างเป็นระบบหรือไม่", questionEN:"Is there a systematic employee skill development and training system?", inputType:"scale", requiredDocs:["Procedure: Training"], critical:false },
+      { id:"5-2", no:"(2)", question:"บุคลากรฝ่ายผลิต (PD) และฝ่าย QA มีทักษะเหมาะสมกับงาน พร้อมหลักฐาน OJT หรือไม่", questionEN:"Do production and QA personnel have appropriate skills with OJT evidence?", inputType:"scale", requiredDocs:["OJT Record (ฝ่าย PD, QA)","Employee Skill Matrix (ฝ่าย PD, QA)"], critical:false },
+      { id:"5-3", no:"(3)", question:"มีการฝึกอบรม Customer Specific Requirements (เช่น Supplier Quality Manual) ให้กับพนักงานที่เกี่ยวข้องหรือไม่", questionEN:"Are employees trained on Customer Specific Requirements?", inputType:"scale", requiredDocs:["Training Record: Customer Specific Req. (ฝ่าย QA, PD)"], critical:false }
+    ]
+  },
+  {
+    id: 6, title: "Project Control & New Model", titleTH: "การควบคุมโครงการและ New Model", icon: "🚀",
+    items: [
+      { id:"6-1", no:"(1)", question:"มีระบบ APQP สำหรับ New Model / New Project พร้อม Feasibility Commitment และการประชุมที่ได้รับอนุมัติหรือไม่", questionEN:"Is there an APQP system for new models with feasibility commitment?", inputType:"scale", requiredDocs:["Procedure: APQP","ประกาศแต่งตั้งทีม APQP","Feasibility Commitment (TFT Part)","บันทึกการประชุม New Part"], critical:true },
+      { id:"6-2", no:"(2)", question:"มีการจัดทำ PPAP และ PSW ที่ได้รับ Approved จาก Customer หรือไม่", questionEN:"Is PPAP and PSW prepared and approved by customer?", inputType:"scale", requiredDocs:["Procedure: PPAP","PPAP + PSW (TFT Approved)"], critical:true },
+      { id:"6-3", no:"(3)", question:"มีการจัดทำ P-FMEA (AIAG & VDA 1st Edition) และมีการทบทวนอย่างต่อเนื่อง สะท้อนปัญหาจริงหรือไม่", questionEN:"Is P-FMEA (AIAG & VDA 1st Ed.) prepared and continuously reviewed?", inputType:"scale", requiredDocs:["FMEA (AIAG&VDA Version ใหม่, Approved)","หลักฐานการ Update FMEA จากปัญหาจริง"], critical:true },
+      { id:"6-4", no:"(4)", question:"มีการจัดทำ Control Plan ที่เชื่อมโยงกับ P-FMEA, WP, WI, SC และได้รับ Approved จาก Customer หรือไม่", questionEN:"Is Control Plan linked to P-FMEA, WP, WI, SC and approved by customer?", inputType:"scale", requiredDocs:["Control Plan (TFT Approved)","หลักฐาน SC Symbol ใน Control Plan + FMEA"], critical:true }
+    ]
+  },
+  {
+    id: 7, title: "Lot Control & Traceability", titleTH: "ระบบควบคุม Lot และการสอบกลับ", icon: "🔖",
+    items: [
+      { id:"7-1", no:"(1)", question:"ชิ้นงานมีการชี้บ่ง Lot No. / Production Date และสามารถสอบกลับถึงวัตถุดิบที่ใช้ผลิตได้หรือไม่", questionEN:"Are parts identified with Lot No./Production Date and traceable to raw material?", inputType:"scale", requiredDocs:["ตัวอย่าง Label ชี้บ่งชิ้นงาน (Lot No., Prod. Date)","Traceability Record (ถึง Raw Material)"], critical:true },
+      { id:"7-2", no:"(2)", question:"มีระบบควบคุม FIFO ในพื้นที่คลังวัตถุดิบ, WIP, และสินค้าสำเร็จรูป (Finish Goods) หรือไม่", questionEN:"Is FIFO controlled in raw material, WIP, and finished goods areas?", inputType:"scale", requiredDocs:["หลักฐาน FIFO Control (Warehouse, WIP, FG Area)"], critical:false },
+      { id:"7-3", no:"(3)", question:"พื้นที่จัดเก็บมีการป้องกันฝุ่น สนิม การเสื่อมสภาพของชิ้นงานอย่างเหมาะสมหรือไม่", questionEN:"Is storage area protected against dust, rust, and part deterioration?", inputType:"scale", requiredDocs:["ภาพถ่าย / บันทึกการตรวจสอบพื้นที่จัดเก็บ"], critical:false }
+    ]
+  },
+  {
+    id: 8, title: "Process Control", titleTH: "การควบคุมกระบวนการผลิต", icon: "⚙️",
+    items: [
+      { id:"8-1", no:"(1)", question:"มีการจัดการสิ่งแวดล้อมและความปลอดภัย (PPE, ความสะอาด, กิจกรรม 5ส) ที่เพียงพอหรือไม่", questionEN:"Is workplace environment and safety management adequate (PPE, cleanliness, 5S)?", inputType:"scale", requiredDocs:["บันทึกการตรวจ 5ส","หลักฐานการอบรม PPE"], critical:false },
+      { id:"8-2", no:"(2)", question:"Process Flow และ PQC/Control Plan สอดคล้องกับกระบวนการผลิตจริงหรือไม่", questionEN:"Do Process Flow and PQC/Control Plan align with actual production processes?", inputType:"scale", requiredDocs:["Process Flow Chart","PQC / Control Plan (เปรียบเทียบกับ Process จริง)"], critical:true },
+      { id:"8-3", no:"(3)", question:"มีระบบ Poka-Yoke ป้องกันชิ้นงานผิดรุ่นหรือการข้ามกระบวนการในสายการผลิตหรือไม่", questionEN:"Is there a Poka-Yoke system to prevent wrong model or process skipping?", inputType:"scale", requiredDocs:["บันทึก Poka-Yoke / Error Proofing Log","ผลการทดสอบ Poka-Yoke"], critical:true },
+      { id:"8-4", no:"(4)", question:"มีมาตรฐานการตรวจสอบชิ้นงานสำเร็จรูป (Inspection STD) และพนักงานปฏิบัติตามมาตรฐานได้ถูกต้องหรือไม่", questionEN:"Is there a finished goods inspection standard and can operators follow it correctly?", inputType:"scale", requiredDocs:["Inspection STD ชิ้นงานสำเร็จรูป","หลักฐานการ Verify พนักงานตามมาตรฐาน"], critical:false }
+    ]
+  },
+  {
+    id: 9, title: "Non-Conforming Control", titleTH: "การควบคุมสินค้าไม่ได้มาตรฐาน", icon: "🚫",
+    items: [
+      { id:"9-1", no:"(1)", question:"มีขั้นตอนการควบคุมและป้องกันการปนกันของชิ้นงาน NG กับชิ้นงานปกติอย่างชัดเจนหรือไม่", questionEN:"Are there clear procedures to prevent mixing of NG and conforming parts?", inputType:"scale", requiredDocs:["Procedure: NC Control","วิธีการชี้บ่งและแยกชิ้นงาน NG"], critical:true },
+      { id:"9-2", no:"(2)", question:"มีระบบ Root Cause Analysis และ Corrective Action ที่สามารถขจัดปัญหาไม่ให้เกิดซ้ำได้หรือไม่", questionEN:"Is there a Root Cause Analysis and Corrective Action system to prevent recurrence?", inputType:"scale", requiredDocs:["CAR / 8D Report","หลักฐาน Root Cause Analysis (5-Why, Fishbone)"], critical:true },
+      { id:"9-3", no:"(3)", question:"ชิ้นงานที่ผ่านการซ่อม (Rework) ต้องผ่านการตรวจ Final Inspection ทุกครั้งและได้รับ Approved จาก Customer ก่อนหรือไม่", questionEN:"Must reworked parts pass Final Inspection and receive customer approval?", inputType:"scale", requiredDocs:["Procedure: Rework Control","บันทึก Rework + Final Inspection Record"], critical:true },
+      { id:"9-4", no:"(4)", question:"มีการติดตามผล NCR ที่เกิดขึ้นในระหว่างปี และ Audit ครั้งที่ผ่านมาอย่างต่อเนื่องหรือไม่", questionEN:"Is there continuous follow-up on NCRs and previous audit findings?", inputType:"scale", requiredDocs:["NCR Log (ประจำปี)","รายงานการ Follow-up Audit ครั้งก่อน"], critical:false }
+    ]
+  },
+  {
+    id: 10, title: "Measuring Equipment Control", titleTH: "ระบบควบคุมเครื่องมือวัด", icon: "📏",
+    items: [
+      { id:"10-1", no:"(1)", question:"เครื่องมือวัด, Jig, Gauge ได้รับการสอบเทียบตามแผนที่กำหนด และมีการชี้บ่งสถานะสอบเทียบหรือไม่", questionEN:"Are measuring instruments calibrated per plan with calibration status labeled?", inputType:"scale", requiredDocs:["Calibration Plan / Schedule","Calibration Certificate (ไม่หมดอายุ)","Sticker/Label สถานะสอบเทียบบนเครื่องมือ"], critical:true },
+      { id:"10-2", no:"(2)", question:"ผู้ให้บริการสอบเทียบภายนอกได้รับการรับรองตามมาตรฐานสากล เช่น ISO/IEC 17025 หรือไม่", questionEN:"Is the external calibration provider certified to ISO/IEC 17025?", inputType:"scale", requiredDocs:["Certificate ห้องปฏิบัติการสอบเทียบ (ISO/IEC 17025)"], critical:false },
+      { id:"10-3", no:"(3)", question:"มีการวิเคราะห์ระบบการวัด (MSA) สำหรับเครื่องมือวัดในกระบวนการควบคุม SC หรือไม่", questionEN:"Is Measurement System Analysis (MSA) performed for SC process gauges?", inputType:"scale", requiredDocs:["MSA Report (Gage R&R หรือ Attribute MSA)"], critical:false }
+    ]
+  },
+  {
+    id: 11, title: "SoC (Substance of Concern)", titleTH: "การควบคุมสารปนเปื้อน", icon: "🧪",
+    items: [
+      { id:"11-1", no:"(1)", question:"มีระบบควบคุม SoC ตามข้อกำหนด และแผนการทดสอบประจำปีให้ทันตามกำหนดของลูกค้าหรือไม่", questionEN:"Is there a SoC control system with annual test plan within customer deadlines?", inputType:"scale", requiredDocs:["Procedure: SoC Control","แผนการส่งทดสอบ SoC ประจำปี","SoC Test Report (ปัจจุบัน)"], critical:true },
+      { id:"11-2", no:"(2)", question:"ผลการตรวจ SoC ถูกยืนยันทุกปีและรายงานให้ลูกค้ารับทราบ รวมถึงบรรจุภัณฑ์ที่ใช้หรือไม่", questionEN:"Are SoC results confirmed annually and reported to customer including packaging?", inputType:"scale", requiredDocs:["SoC Certificate (ผลิตภัณฑ์ + บรรจุภัณฑ์ + สี Marker)","หลักฐานการส่งผลให้ลูกค้า"], critical:true },
+      { id:"11-3", no:"(3)", question:"มีการยืนยัน Certificate ของห้องปฏิบัติการก่อนส่งตัวอย่างเข้าทดสอบ SoC หรือไม่", questionEN:"Is laboratory certification verified before sending SoC test samples?", inputType:"scale", requiredDocs:["Certificate ห้องปฏิบัติการทดสอบ SoC (ถูกต้อง)"], critical:false }
+    ]
+  }
+];
+
+const scaleLevels = [
+  { val:0, desc:"ไม่มีระเบียบ + ไม่มีหลักฐาน", color:"#ef4444" },
+  { val:1, desc:"ไม่มีระเบียบ แต่มีหลักฐาน", color:"#f97316" },
+  { val:2, desc:"มีระเบียบ แต่ไม่ปฏิบัติ", color:"#eab308" },
+  { val:3, desc:"มีระเบียบไม่สมบูรณ์ + มีหลักฐาน", color:"#84cc16" },
+  { val:4, desc:"มีระเบียบสมบูรณ์ + ปฏิบัติจริง", color:"#22c55e" }
+];
+
+// State
+let activeSection = 0;
+const answers = {}; // id -> value (number or array)
+const classify = {}; // id -> 'C'|'NC'|'OFI'|null
+const comments = {}; // id -> string
+const docsOpen = {}; // id -> bool
+
+const allItems = auditSections.flatMap(s => s.items);
+
+function getScore() {
+  const scaleItems = allItems.filter(i => i.inputType === 'scale');
+  const total = scaleItems.length * 4;
+  const score = scaleItems.reduce((s, i) => s + (answers[i.id] !== undefined ? answers[i.id] : 0), 0);
+  const answered = allItems.filter(i => answers[i.id] !== undefined || (Array.isArray(answers[i.id]) && answers[i.id].length > 0)).length;
+  const pct = total > 0 ? (score / total) * 100 : 0;
+  return { score, total, pct, answered };
+}
+
+function getGrade(pct) {
+  if (pct >= 90) return 'A';
+  if (pct >= 70) return 'B';
+  if (pct >= 60) return 'C';
+  if (pct > 50) return 'D';
+  return 'F';
+}
+
+const gradeColors = { A:'#22c55e', B:'#84cc16', C:'#eab308', D:'#f97316', F:'#ef4444' };
+
+function updateHeader() {
+  const {score, total, pct, answered} = getScore();
+  const grade = getGrade(pct);
+  const ncItems = allItems.filter(i => classify[i.id] === 'NC');
+  const criticalNC = ncItems.filter(i => i.critical);
+  const pass = pct >= 70 && criticalNC.length === 0;
+
+  document.getElementById('hdrGrade').textContent = grade;
+  document.getElementById('hdrGrade').style.color = gradeColors[grade];
+  document.getElementById('hdrPct').textContent = pct.toFixed(1) + '%';
+  document.getElementById('hdrStatus').textContent = pass ? '✓ PASS' : '✗ FAIL';
+  document.getElementById('hdrStatus').style.color = pass ? '#22c55e' : '#ef4444';
+  document.getElementById('progressText').textContent = `ความคืบหน้า: ${answered}/${allItems.length} ข้อ`;
+  document.getElementById('scoreText').textContent = `คะแนน: ${score}/${total}`;
+  document.getElementById('progressFill').style.width = ((answered / allItems.length) * 100) + '%';
+}
+
+function renderTabs() {
+  const container = document.getElementById('tabsContainer');
+  container.innerHTML = auditSections.map((s, i) => {
+    const cnt = s.items.filter(item => answers[item.id] !== undefined).length;
+    const badge = cnt > 0 ? `<span class="tab-badge">${cnt}/${s.items.length}</span>` : '';
+    return `<button class="tab-btn ${i === activeSection ? 'active' : ''}" onclick="switchSection(${i})">
+      ${s.icon} ${s.id}. ${s.titleTH}${badge}
+    </button>`;
+  }).join('');
+}
+
+function renderSection() {
+  const section = auditSections[activeSection];
+  const panel = document.getElementById('sectionPanel');
+
+  let html = `<div class="section-header">
+    <div class="section-title">${section.icon} ${section.id}. ${section.title}</div>
+    <div class="section-subtitle">${section.titleTH}</div>
+  </div>`;
+
+  section.items.forEach((item, idx) => {
+    const isAnswered = answers[item.id] !== undefined;
+    const cls = classify[item.id];
+    const comment = comments[item.id] || '';
+    const docsExpanded = docsOpen[item.id];
+
+    // Input HTML
+    let inputHtml = '';
+    if (item.inputType === 'scale') {
+      const curVal = answers[item.id];
+      inputHtml = `<div class="scale-wrap">
+        ${scaleLevels.map(l => {
+          const active = curVal === l.val;
+          return `<button class="scale-btn" 
+            onclick="setScale('${item.id}', ${l.val})"
+            title="${l.desc}"
+            style="border-color:${active ? l.color : '#334155'};background:${active ? l.color : '#1e293b'};color:${active ? '#fff' : '#94a3b8'}"
+          >${l.val}</button>`;
+        }).join('')}
+        ${curVal !== undefined ? `<span class="scale-desc">${scaleLevels[curVal].desc}</span>` : ''}
+      </div>`;
+    } else if (item.inputType === 'checklist') {
+      const sel = answers[item.id] || [];
+      inputHtml = `<div class="checklist-wrap">
+        ${item.options.map(opt => {
+          const checked = sel.includes(opt);
+          return `<button class="check-btn ${checked ? 'checked' : ''}" onclick="toggleCheck('${item.id}', '${opt}')">${checked ? '✓ ' : ''}${opt}</button>`;
+        }).join('')}
+      </div>`;
+    }
+
+    // Docs HTML
+    const docsHtml = `
+      <button class="docs-toggle" onclick="toggleDocs('${item.id}')">
+        ${docsExpanded ? '▼' : '▶'} 📂 Required Documents (${item.requiredDocs.length} รายการ)
+      </button>
+      <div class="docs-panel ${docsExpanded ? 'open' : ''}" id="docs-${item.id}">
+        <div class="docs-title">เอกสารที่ต้องใช้ยืนยันการ Audit:</div>
+        ${item.requiredDocs.map((d,di) => `<div class="doc-row"><span class="doc-num">${di+1}.</span><span class="doc-name">${d}</span></div>`).join('')}
+      </div>`;
+
+    html += `<div class="audit-item ${isAnswered ? 'answered' : ''}" id="item-${item.id}">
+      <div class="item-header">
+        <span class="item-no">${item.no}</span>
+        ${item.critical ? '<span class="item-critical">⚡ CRITICAL</span>' : ''}
+        <div>
+          <div class="item-q">${item.question}</div>
+          <div class="item-qen">${item.questionEN}</div>
+        </div>
+      </div>
+      <div class="input-type-badge">Input: <span>${item.inputType === 'scale' ? '⭐ Scale 0-4' : '☑ Checklist'}</span></div>
+      ${inputHtml}
+      <div class="classify-wrap">
+        <button class="cls-btn C ${cls === 'C' ? 'active' : ''}" onclick="setClassify('${item.id}','C')">✓ Conformable</button>
+        <button class="cls-btn NC ${cls === 'NC' ? 'active' : ''}" onclick="setClassify('${item.id}','NC')">✗ Non-Conforming</button>
+        <button class="cls-btn OFI ${cls === 'OFI' ? 'active' : ''}" onclick="setClassify('${item.id}','OFI')">💡 OFI</button>
+      </div>
+      <textarea class="comment-box" placeholder="หมายเหตุ / ข้อสังเกต / หลักฐานที่พบ..." oninput="setComment('${item.id}', this.value)">${comment}</textarea>
+      ${docsHtml}
+    </div>`;
+  });
+
+  panel.innerHTML = html;
+
+  // Nav buttons
+  document.getElementById('btnPrev').disabled = activeSection === 0;
+  document.getElementById('btnNext').disabled = activeSection === auditSections.length - 1;
+}
+
+function switchSection(i) {
+  activeSection = i;
+  renderTabs();
+  renderSection();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function navigate(dir) {
+  const next = activeSection + dir;
+  if (next >= 0 && next < auditSections.length) switchSection(next);
+}
+
+function setScale(id, val) {
+  answers[id] = val;
+  renderSection();
+  renderTabs();
+  updateHeader();
+}
+
+function toggleCheck(id, opt) {
+  const cur = answers[id] || [];
+  answers[id] = cur.includes(opt) ? cur.filter(v => v !== opt) : [...cur, opt];
+  renderSection();
+  updateHeader();
+}
+
+function setClassify(id, val) {
+  classify[id] = classify[id] === val ? null : val;
+  renderSection();
+  updateHeader();
+}
+
+function setComment(id, val) {
+  comments[id] = val;
+}
+
+function toggleDocs(id) {
+  docsOpen[id] = !docsOpen[id];
+  const el = document.getElementById('docs-' + id);
+  if (el) el.classList.toggle('open');
+  // Update toggle button text
+  renderSection();
+}
+
+function openSummary() {
+  const {score, total, pct} = getScore();
+  const grade = getGrade(pct);
+  const gc = gradeColors[grade];
+  const ncItems = allItems.filter(i => classify[i.id] === 'NC');
+  const criticalNC = ncItems.filter(i => i.critical);
+  const pass = pct >= 70 && criticalNC.length === 0;
+
+  const gradeRows = [
+    {range:'90-100%', g:'A (Excellent)', c:'#22c55e'},
+    {range:'70-90%', g:'B (Good)', c:'#84cc16'},
+    {range:'60-70%', g:'C (Fair)', c:'#eab308'},
+    {range:'50-60%', g:'D (Non Conforming)', c:'#f97316'},
+    {range:'<50%', g:'F (Fail)', c:'#ef4444'},
+  ];
+
+  let ncHtml = '';
+  if (ncItems.length > 0) {
+    ncHtml = `<div class="nc-section">
+      <div class="nc-header">✗ Non-Conformities (${ncItems.length} รายการ)
+        ${criticalNC.length > 0 ? `<span class="nc-critical-badge">⚡ Critical: ${criticalNC.length} รายการ → ต้องออกใบ NC</span>` : ''}
+      </div>
+      ${ncItems.map(item => `<div class="nc-card">
+        <div class="nc-card-id">${item.critical ? '⚡' : '⚠'} ${item.id} — คะแนน: ${answers[item.id] !== undefined ? answers[item.id] : 'N/A'}/4</div>
+        <div class="nc-card-q">${item.question.substring(0,80)}...</div>
+        ${comments[item.id] ? `<div class="nc-card-comment">💬 ${comments[item.id]}</div>` : ''}
+      </div>`).join('')}
+    </div>`;
+  }
+
+  const conds = [
+    { cond:`คะแนนรวม < 70%`, trigger: pct < 70, msg:'→ ต้องทำ Secondary Audit' },
+    { cond:`พบ Critical NC (${criticalNC.length} รายการ)`, trigger: criticalNC.length > 0, msg:'→ ต้องออกใบ NC ทันที' },
+    { cond:`Classify = NC โดยทีม Audit`, trigger: ncItems.length > 0, msg:`→ ออก NC Report (${ncItems.length} ใบ)` },
+  ];
+
+  document.getElementById('modalContent').innerHTML = `
+    <div class="score-card" style="border-color:${gc}40">
+      <div class="score-grade" style="color:${gc}">${grade}</div>
+      <div class="score-pct">${pct.toFixed(1)}%</div>
+      <div class="score-label">คะแนนรวม ${score} / ${total} คะแนน</div>
+      <div class="score-pass" style="background:${pass?'#14532d':'#450a0a'};color:${pass?'#86efac':'#fca5a5'}">
+        ${pass ? '✓ PASS — ผ่านการประเมิน' : '✗ FAIL — ไม่ผ่านการประเมิน'}
+      </div>
+    </div>
+    <div class="grade-table">
+      <div class="grade-table-title">เกณฑ์การประเมิน</div>
+      ${gradeRows.map(r => `<div class="grade-row" style="background:${grade===r.g[0]?r.c+'20':'transparent'}">
+        <span style="font-size:13px;color:${r.c};font-weight:${grade===r.g[0]?'700':'400'}">${r.g}</span>
+        <span style="font-size:13px;color:#64748b">${r.range}</span>
+      </div>`).join('')}
+    </div>
+    ${ncHtml}
+    <div class="nc-conditions">
+      <div class="nc-cond-title">🏷 เงื่อนไขการออกใบ NC (Non-Conformity Report)</div>
+      ${conds.map(c => `<div class="nc-cond-row">
+        <span style="font-size:16px">${c.trigger ? '🔴' : '🟢'}</span>
+        <span class="nc-cond-text" style="color:${c.trigger?'#fca5a5':'#86efac'}">${c.cond} ${c.trigger ? c.msg : '— ไม่พบ'}</span>
+      </div>`).join('')}
+    </div>`;
+
+  document.getElementById('summaryModal').classList.add('open');
+}
+
+function closeSummary() {
+  document.getElementById('summaryModal').classList.remove('open');
+}
+
+// ── STORAGE KEY ──
+const STORAGE_KEY = 'tytc_audit_data_v1';
+
+// ── AUTO-SAVE ──
+let autoSaveTimer = null;
+function triggerAutoSave() {
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => {
+    saveToLocal();
+    const ind = document.getElementById('autoSaveIndicator');
+    if (ind) {
+      ind.classList.add('show');
+      setTimeout(() => ind.classList.remove('show'), 2000);
+    }
+  }, 800);
+}
+
+function saveToLocal() {
+  const data = buildSaveData();
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    updateSaveStatus();
+  } catch(e) {
+    console.warn('localStorage save failed', e);
+  }
+}
+
+function loadFromLocal() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    applyData(JSON.parse(raw));
+    return true;
+  } catch(e) { return false; }
+}
+
+function buildSaveData() {
+  const infoFields = ['supplierName','supplierCode','auditDate','auditType',
+    'auditorTYTC','auditorTYTCTitle','auditorTYTCSign',
+    'auditorSupplier','auditorSupplierTitle','auditorSupplierSign'];
+  const info = {};
+  infoFields.forEach(f => { const el = document.getElementById(f); if (el) info[f] = el.value; });
+  return {
+    version: 1,
+    savedAt: new Date().toISOString(),
+    answers: {...answers},
+    classify: {...classify},
+    comments: {...comments},
+    info
+  };
+}
+
+function applyData(data) {
+  Object.assign(answers, data.answers || {});
+  Object.assign(classify, data.classify || {});
+  Object.assign(comments, data.comments || {});
+  if (data.info) {
+    Object.entries(data.info).forEach(([k,v]) => {
+      const el = document.getElementById(k); if (el) el.value = v;
+    });
+  }
+}
+
+function updateSaveStatus() {
+  const el = document.getElementById('saveStatus');
+  if (!el) return;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const d = JSON.parse(raw);
+      const dt = new Date(d.savedAt);
+      const fmt = dt.toLocaleString('th-TH', {dateStyle:'short', timeStyle:'short'});
+      el.innerHTML = `Auto-save เปิดอยู่ · บันทึกล่าสุด <span>${fmt}</span>`;
+    } else {
+      el.textContent = 'Auto-save เปิดอยู่ · ยังไม่มีข้อมูล';
+    }
+  } catch(e) { el.textContent = 'Auto-save เปิดอยู่'; }
+}
+
+// ── EXPORT JSON ──
+function exportJSON() {
+  const data = buildSaveData();
+  const {pct} = getScore();
+  const grade = getGrade(pct);
+  data.summary = { grade, scorePercent: pct.toFixed(1) };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `TYTC_SelfAudit_${dateStr}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✓ Export สำเร็จ! ไฟล์ถูกบันทึกแล้ว', 'success');
+}
+
+// ── EXPORT PDF ──
+function exportPDF() {
+  // Build all sections HTML for printing
+  const allPrint = document.getElementById('allSectionsPrint');
+
+  // Render each section as a block
+  let sectionsHtml = '';
+  auditSections.forEach((section, si) => {
+    let itemsHtml = '';
+    section.items.forEach((item) => {
+      const isAnswered = answers[item.id] !== undefined;
+      const cls = classify[item.id];
+      const comment = comments[item.id] || '';
+
+      let inputHtml = '';
+      if (item.inputType === 'scale') {
+        const curVal = answers[item.id];
+        inputHtml = `<div class="scale-wrap">
+          ${scaleLevels.map(l => {
+            const active = curVal === l.val;
+            return `<button class="scale-btn" style="border-color:${active ? l.color : '#334155'};background:${active ? l.color+'33' : '#1e293b'};color:${active ? l.color : '#94a3b8'};${active?'font-weight:800;':''}">${l.val}</button>`;
+          }).join('')}
+          ${curVal !== undefined ? `<span class="scale-desc" style="color:${scaleLevels[curVal].color};font-weight:600">${scaleLevels[curVal].desc}</span>` : ''}
+        </div>`;
+      } else if (item.inputType === 'checklist') {
+        const sel = answers[item.id] || [];
+        inputHtml = `<div class="checklist-wrap">
+          ${item.options.map(opt => {
+            const checked = sel.includes(opt);
+            return `<button class="check-btn ${checked ? 'checked' : ''}">${checked ? '✓ ' : ''}${opt}</button>`;
+          }).join('')}
+        </div>`;
+      }
+
+      const clsHtml = `<div class="classify-wrap">
+        <button class="cls-btn C ${cls === 'C' ? 'active' : ''}">✓ Conformable</button>
+        <button class="cls-btn NC ${cls === 'NC' ? 'active' : ''}">✗ Non-Conforming</button>
+        <button class="cls-btn OFI ${cls === 'OFI' ? 'active' : ''}">💡 OFI</button>
+      </div>`;
+
+      const commentHtml = comment ? `<textarea class="comment-box" readonly>${comment}</textarea>` : 
+        `<textarea class="comment-box" readonly style="color:#94a3b8;font-style:italic">ไม่มีหมายเหตุ</textarea>`;
+
+      itemsHtml += `<div class="audit-item ${isAnswered ? 'answered' : ''}">
+        <div class="item-header">
+          <span class="item-no">${item.no}</span>
+          ${item.critical ? '<span class="item-critical">⚡ CRITICAL</span>' : ''}
+          <div>
+            <div class="item-q">${item.question}</div>
+            <div class="item-qen">${item.questionEN}</div>
+          </div>
+        </div>
+        <div class="input-type-badge">Input: <span>${item.inputType === 'scale' ? '⭐ Scale 0-4' : '☑ Checklist'}</span></div>
+        ${inputHtml}
+        ${clsHtml}
+        ${commentHtml}
+      </div>`;
+    });
+
+    sectionsHtml += `<div class="print-section-block">
+      <div class="section-panel" style="border:none;border-radius:0;">
+        <div class="section-header">
+          <div class="section-title">${section.icon} ${section.id}. ${section.title}</div>
+          <div class="section-subtitle">${section.titleTH}</div>
+        </div>
+        ${itemsHtml}
+      </div>
+    </div>`;
+  });
+
+  allPrint.innerHTML = sectionsHtml;
+
+  // Build print summary
+  const {score, total, pct} = getScore();
+  const grade = getGrade(pct);
+  const gc = gradeColors[grade];
+  const ncItems = allItems.filter(i => classify[i.id] === 'NC');
+  const criticalNC = ncItems.filter(i => i.critical);
+  const pass = pct >= 70 && criticalNC.length === 0;
+
+  const supplierName = document.getElementById('supplierName').value || '—';
+  const auditorTYTC = document.getElementById('auditorTYTC').value || '—';
+  const auditorSupplier = document.getElementById('auditorSupplier').value || '—';
+  const auditDate = document.getElementById('auditDate').value || '—';
+
+  let ncRows = ncItems.map(item => `<tr>
+    <td>${item.id}</td>
+    <td>${item.critical ? '⚡ Critical' : '⚠ Major'}</td>
+    <td>${item.question.substring(0,60)}...</td>
+    <td>${answers[item.id] !== undefined ? answers[item.id] + '/4' : 'N/A'}</td>
+    <td>${comments[item.id] || '—'}</td>
+  </tr>`).join('');
+
+  document.getElementById('printSummary').innerHTML = `
+    <div class="print-summary-title">📊 สรุปผลการตรวจประเมิน Self-Audit</div>
+    <div class="print-summary-grade" style="color:${gc}">${grade}</div>
+    <div class="print-summary-pct">${pct.toFixed(1)}% (${score}/${total} คะแนน)</div>
+    <div style="text-align:center;margin:8px 0;font-size:13pt;font-weight:700;color:${pass?'#15803d':'#dc2626'}">
+      ${pass ? '✓ PASS — ผ่านการประเมิน' : '✗ FAIL — ไม่ผ่านการประเมิน'}
+    </div>
+    <table class="print-summary-table" style="margin-top:20px">
+      <tr><th>รายการ</th><th>ข้อมูล</th></tr>
+      <tr><td>Supplier</td><td>${supplierName}</td></tr>
+      <tr><td>วันที่ตรวจ</td><td>${auditDate}</td></tr>
+      <tr><td>ผู้ตรวจ TYTC</td><td>${auditorTYTC}</td></tr>
+      <tr><td>ผู้ตรวจ Supplier</td><td>${auditorSupplier}</td></tr>
+      <tr><td>คะแนนรวม</td><td>${score}/${total} (${pct.toFixed(1)}%)</td></tr>
+      <tr><td>เกรด</td><td style="color:${gc};font-weight:700">${grade}</td></tr>
+      <tr><td>จำนวน NC</td><td>${ncItems.length} รายการ (Critical: ${criticalNC.length})</td></tr>
+    </table>
+    ${ncItems.length > 0 ? `
+    <div style="margin-top:20px">
+      <div style="font-weight:700;color:#dc2626;margin-bottom:8px">✗ รายการ Non-Conformities</div>
+      <table class="print-summary-table">
+        <tr><th>ข้อ</th><th>ระดับ</th><th>คำถาม</th><th>คะแนน</th><th>หมายเหตุ</th></tr>
+        ${ncRows}
+      </table>
+    </div>` : '<div style="margin-top:16px;color:#15803d;font-weight:600">✓ ไม่พบ Non-Conformities</div>'}
+    <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:40px">
+      <div style="border-top:1px solid #94a3b8;padding-top:8px;text-align:center;font-size:10pt">
+        ลายเซ็นผู้ตรวจประเมิน TYTC<br><br>
+        <span style="font-weight:600">${auditorTYTC}</span><br>
+        ${document.getElementById('auditorTYTCTitle').value || ''}
+      </div>
+      <div style="border-top:1px solid #94a3b8;padding-top:8px;text-align:center;font-size:10pt">
+        ลายเซ็นผู้ตรวจประเมิน Supplier<br><br>
+        <span style="font-weight:600">${auditorSupplier}</span><br>
+        ${document.getElementById('auditorSupplierTitle').value || ''}
+      </div>
+    </div>`;
+
+  showToast('🖨 กำลังเปิดหน้าต่าง Print...', 'success');
+  setTimeout(() => {
+    window.print();
+    // Clean up print containers after printing
+    setTimeout(() => {
+      allPrint.innerHTML = '';
+      document.getElementById('printSummary').innerHTML = '';
+    }, 2000);
+  }, 200);
+}
+
+
+function importJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.answers) throw new Error('invalid format');
+      // clear first
+      Object.keys(answers).forEach(k => delete answers[k]);
+      Object.keys(classify).forEach(k => delete classify[k]);
+      Object.keys(comments).forEach(k => delete comments[k]);
+      applyData(data);
+      saveToLocal();
+      renderTabs();
+      renderSection();
+      updateHeader();
+      showToast('✓ Import สำเร็จ! โหลดข้อมูลเรียบร้อยแล้ว', 'success');
+    } catch(err) {
+      showToast('✗ ไฟล์ไม่ถูกต้อง กรุณาเลือกไฟล์ .json จากการ Export เท่านั้น', 'error');
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ── CLEAR ALL ──
+function clearAll() {
+  if (!confirm('ล้างข้อมูลทั้งหมดหรือไม่?\n\nข้อมูลที่กรอกไว้จะหายทั้งหมด (แนะนำ Export ก่อน)')) return;
+  Object.keys(answers).forEach(k => delete answers[k]);
+  Object.keys(classify).forEach(k => delete classify[k]);
+  Object.keys(comments).forEach(k => delete comments[k]);
+  // Clear supplier info fields
+  ['supplierName','supplierCode','auditDate','auditType',
+   'auditorTYTC','auditorTYTCTitle','auditorTYTCSign',
+   'auditorSupplier','auditorSupplierTitle','auditorSupplierSign'].forEach(f => {
+    const el = document.getElementById(f); if (el) el.value = '';
+  });
+  localStorage.removeItem(STORAGE_KEY);
+  renderTabs();
+  renderSection();
+  updateHeader();
+  updateSaveStatus();
+  showToast('🗑 ล้างข้อมูลเรียบร้อยแล้ว', '');
+}
+
+// ── TOAST ──
+function showToast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (type ? ' ' + type : '');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ── PATCH save into setters ──
+const _origSetScale = setScale;
+setScale = function(id, val) { _origSetScale(id, val); triggerAutoSave(); };
+
+const _origToggleCheck = toggleCheck;
+toggleCheck = function(id, opt) { _origToggleCheck(id, opt); triggerAutoSave(); };
+
+const _origSetClassify = setClassify;
+setClassify = function(id, val) { _origSetClassify(id, val); triggerAutoSave(); };
+
+const _origSetComment = setComment;
+setComment = function(id, val) { _origSetComment(id, val); triggerAutoSave(); };
+
+// ── Init ──
+const hadData = loadFromLocal();
+renderTabs();
+renderSection();
+updateHeader();
+updateSaveStatus();
+if (hadData) showToast('✓ โหลดข้อมูลที่บันทึกไว้เรียบร้อยแล้ว', 'success');
+</script>
+</body>
+</html>
